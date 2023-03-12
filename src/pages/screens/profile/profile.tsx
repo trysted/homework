@@ -1,8 +1,6 @@
 import { Placeholder } from "@shared/ui/core"
 
-type ProfileProps = {}
-
-export const Profile = ({}: ProfileProps) => {
+export const Profile = () => {
     return (
         <Placeholder message = "Обновите приложение чтобы увидеть контент"/>
     )

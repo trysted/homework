@@ -2,6 +2,7 @@ import { View } from "react-native";
 import { TitleView } from "./title-view";
 import { Images } from "../../../../../assets";
 import { styled } from "@shared/ui/theme";
+import { Typography } from "@shared/ui/core";
 
 const ContentContainer = styled.View`
     background-color: ${ ({theme}) => theme.palette.background.secondary };
@@ -18,18 +19,6 @@ const TextContainer = styled.View`
     padding-right: ${ ({theme}) => theme.spacing(2) }px;
     flex-grow: ${ ({theme}) => theme.spacing(2) };
 `
-const BigText = styled.Text`
-    letter-scaping: ${ ({theme}) => theme.typography.body15Regular.letterSpacing };
-    font-family: ${ ({theme}) => theme.typography.body15Regular.fontFamily };
-    font-size: ${ ({theme}) => theme.typography.body15Regular.size };
-    color: white;
-`
-const SmallText = styled.Text`
-    letter-scaping: ${ ({theme}) => theme.typography.caption1.letterSpacing };
-    font-family: ${ ({theme}) => theme.typography.caption1.fontFamily };
-    font-size: ${ ({theme}) => theme.typography.caption1.size };
-    color: white;
-`
 
 const Icon = styled.Image`
     width: 24px;
@@ -45,8 +34,8 @@ export const CardSelection = () => {
                     <ContentContainer>
                         <VisaImage source = { Images.visa }/>
                         <TextContainer>
-                            <BigText>Карта зарплатная</BigText>
-                            <SmallText>457 334,00 ₽</SmallText>
+                            <Typography variant = 'body15Regular'>Карта зарплатная</Typography>
+                            <Typography variant = 'caption1'>457 334,00 ₽</Typography>
                         </TextContainer>
                         <Icon source= { Images.arrowDown }/>
                     </ContentContainer>

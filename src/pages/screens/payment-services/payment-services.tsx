@@ -1,21 +1,20 @@
 import { FlatList, FlatListProps } from "react-native"
-import { TitledImageItem, Separator, Placeholder } from "@shared/ui/core"
+import { TitledImageItem, Separator, Placeholder, Flex1, KeyboardAvoadingViewFlex1 } from "@shared/ui/core"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { useEffect } from "react"
 import { ServiceCategory, StackParamList } from "@shared/types/types"
 import { Images } from "../../../../assets"
 import { useStore } from "effector-react"
-import { $filteredServices, searchServices, setServices } from './model'
+import { $filteredServices, searchServices, setServices } from "@entities/payments/models"
 import { styled } from "@shared/ui/theme"
+import { useTheme } from "styled-components"
 
 type PaymentServicesProps = NativeStackScreenProps<StackParamList, 'paymentServices'>
 
-const MainContainer = styled.KeyboardAvoidingView`
-    flex: 1;
+const MainContainer = styled(KeyboardAvoadingViewFlex1)`
     background-color: ${ ({theme}) => theme.palette.background.primary };
 `
-const Container = styled.View`
-    flex: 1;
+const Container = styled(Flex1)`
     background-color: ${ ({theme}) => theme.palette.background.primary };
 `
 const TextInputContainer = styled.View`
@@ -44,10 +43,10 @@ const ServicesFlatList = styled(FlatList as new (props: FlatListProps<ServiceCat
 export const PaymentServices = ({ route, navigation }: PaymentServicesProps) => {
     const filteredServices = useStore($filteredServices)
     const initialData = route.params.services
+    const theme = useTheme()
 
     useEffect(() => {
         setServices(initialData)
-        navigation.setOptions({ title: route.params.title })
     }, [])
 
     const handleSearch = (text: string) => {
@@ -56,7 +55,7 @@ export const PaymentServices = ({ route, navigation }: PaymentServicesProps) => 
 
     return (
     <MainContainer>
-        { initialData.length > 0 &&
+        { initialData.length > 0 ?
         <Container>
         <TextInputContainer>
             <SearchIcon source = { Images.search }/>
@@ -64,7 +63,7 @@ export const PaymentServices = ({ route, navigation }: PaymentServicesProps) => 
                 autoCapitalize = 'none'
                 autoCorrect = { false } 
                 placeholder = "Поиск"
-                placeholderTextColor= '#706D76'
+                placeholderTextColor = { theme.palette.text.tertiary } 
                 clearButtonMode = 'always'
                 onChangeText = { (text) => handleSearch(text) }
             />
@@ -78,12 +77,10 @@ export const PaymentServices = ({ route, navigation }: PaymentServicesProps) => 
                 })
             }} />
         )}
-        keyExtractor = { (item, index) => index.toString() }
+        keyExtractor = { (index) => index.toString() }
         ItemSeparatorComponent = { Separator }
         />
-        </Container>
-        }
-        { initialData.length == 0 &&
+        </Container> :
         <Placeholder message= 'На данный момент доступных способов оплаты нет' />
         }
     </MainContainer>

@@ -1,5 +1,5 @@
 import { TouchableWithoutFeedback } from "react-native";
-import { Images } from "../../../../../assets";
+import { Images } from "../../../../../../assets";
 import { useEffect, useState } from "react";
 import { styled } from "@shared/ui/theme";
 import Modal from "react-native-modal";
@@ -56,6 +56,7 @@ export const ErrorAlert = ({ isVisiable, title, onClose, timeToDismiss }: ErrorA
     const handleClose = () => {
         clearInterval(timer)
         setTimer(undefined)
+        setVisiable(false)
         onClose()
     }
 

@@ -1,10 +1,9 @@
-import { createEffect, createStore, combine } from "effector";
-import { PaymentCategory } from "@shared/types/types";
+import { createEffect, createStore, combine, restore } from "effector";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Cache } from "react-native-cache";
 import { PaymentParser } from "@pages/api/payment-parser";
+import axios from "axios";
 
-export const $payments = createStore<PaymentCategory[] | null>([])
 export const $fetchError = createStore<Error | null>(null)
 
 export const cache = new Cache({
@@ -16,17 +15,27 @@ export const cache = new Cache({
     backend: AsyncStorage
 });
 
-export const fetchPaymentsFx = createEffect(async () => {
+export const fetchPaymentsFx = createEffect(async (ignoreCache: boolean) => {
+    if (ignoreCache) {
+        clearCache()
+    }
     const paymentsCache = await cache.get('payments')
     if (paymentsCache) {
-        return JSON.parse(paymentsCache)
+        try {
+            return JSON.parse(paymentsCache)
+        } catch {
+            clearCache()
+            throw new Error('Invalid cache')
+        }
     }
-    const response = await fetch('https://github.com/kode-frontend/files/raw/main/categories.json');
-    const json = await response.json();
-    const payments = PaymentParser({ paymentCategoriesDTO: json.category })
+    const response = await axios.get('https://github.com/kode-frontend/files/raw/main/categories.json')
+    const data = response.data
+    const payments = PaymentParser({ paymentCategoriesDTO: data.category })
     cache.set('payments', JSON.stringify(payments))
     return payments
 })
+
+export const $payments = restore(fetchPaymentsFx.doneData, null)
 
 export const $paymentsGetStatus = combine({
     loading: fetchPaymentsFx.pending,
@@ -34,13 +43,12 @@ export const $paymentsGetStatus = combine({
     data: $payments,
 });
 
-$payments.on(fetchPaymentsFx.doneData, (_, payload) => payload)
 
 $fetchError
   .on(fetchPaymentsFx.fail, (_, { error }) => error)
   .reset(fetchPaymentsFx.done);
 
-export const clearCache = () => {
+const clearCache = () => {
     cache.remove('payments')
 }
 

@@ -1,9 +1,9 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react-native";
 import { TitledImageItem } from "./titled-image-item";
 import { styled } from "@shared/ui/theme";
+import { Flex1 } from "../flex1";
 
-const Wrapper = styled.View`
-  flex: 1;
+const Wrapper = styled(Flex1)`
   justify-content: center;
 `;
 

@@ -1,5 +1,6 @@
 import { TouchableWithoutFeedback } from "react-native";
 import { styled } from "@shared/ui/theme";
+import { Typography } from "../../typography";
 
 type TitledImageItemProps = {
     isSmallImage: boolean
@@ -35,11 +36,7 @@ const ImageContainer = styled.View`
     height: ${ ({theme}) => theme.spacing(5) }px;
 `
 
-const WhiteText = styled.Text`
-    color: white;
-    letter-scaping: ${ ({theme}) => theme.typography.body15Regular.letterSpacing };
-    font-family: ${ ({theme}) => theme.typography.body15Regular.fontFamily };
-    font-size: ${ ({theme}) => theme.typography.body15Regular.size };
+const WhiteText = styled(Typography)`
     padding-left: ${ ({theme}) => theme.spacing(2) }px;
 `
 
@@ -48,10 +45,11 @@ export const TitledImageItem = ({ isSmallImage, title, source, onClick }: Titled
         <TouchableWithoutFeedback onPress={ onClick }>
         <Container>
             <ImageContainer>
-                { !isSmallImage &&  <BigImage source= {{uri: source}} /> }
-                { isSmallImage &&  <SmallImage source= {{uri: source}} /> }
+                { isSmallImage ?
+                <SmallImage source= {{uri: source}} /> :
+                <BigImage source= {{uri: source}} /> }
             </ImageContainer>
-            <WhiteText>{title}</WhiteText>
+            <WhiteText variant = 'body15Regular'>{title}</WhiteText>
         </Container>
         </TouchableWithoutFeedback>
     );

@@ -1,30 +1,24 @@
 import { styled } from "@shared/ui/theme";
 import { KeyboardListener } from "@shared/types/useKeyboardVisible";
 import { Images } from "../../../../assets";
-import { useEffect, useState } from "react";
-import { TouchableWithoutFeedback, Keyboard, Alert } from "react-native";
-import { ErrorAlert } from "@shared/ui/core";
+import { useState } from "react";
+import { TouchableWithoutFeedback, Keyboard, Alert, ActivityIndicator } from "react-native";
+import { ErrorAlert, KeyboardAvoadingViewFlex1, SafeAreaFlex1, Flex1, Typography, Button, CloseButton } from "@shared/ui/core";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StackParamList } from "@shared/types/types";
-import { usePostPassword } from "./api/usePostPassword";
-import { $guestToken } from "../pin-code/model";
+import { usePostPassword } from "../../../entities/auth/hooks";
+import { $guestToken } from "@entities/auth/models";
 import { useStore } from "effector-react";
-import { setAuthTokens } from './model'
+import { setAuthTokensData } from "@entities/auth/models";
 
 type PasswordScreenProps = NativeStackScreenProps<StackParamList, 'passwordScreen'>
 
 type LogoProps = {
-    theme: any,
     isKeyboardVisiable: boolean
 }
 
-const MainContainer = styled.KeyboardAvoidingView`
+const MainContainer = styled(KeyboardAvoadingViewFlex1)`
     background-color: ${({theme}) => theme.palette.background.secondary };
-    flex: 1;
-`
-
-const SafeAreaContainer = styled.SafeAreaView`
-    flex: 1;
 `
 
 const Logo = styled.Image<LogoProps>`
@@ -34,37 +28,19 @@ const Logo = styled.Image<LogoProps>`
     align-self: center;
 `
 
-const LogoText = styled.Text<LogoProps>`
-    font-size: ${ ({isKeyboardVisiable, theme}) => isKeyboardVisiable ? theme.typography.caption4.size : theme.typography.caption3.size };
-    font-family: ${ ({isKeyboardVisiable, theme}) => isKeyboardVisiable ? theme.typography.caption4.fontFamily : theme.typography.caption3.fontFamily };
-    letter-spacing: ${ ({isKeyboardVisiable, theme}) => isKeyboardVisiable ? theme.typography.caption4.letterSpacing : theme.typography.caption3.letterSpacing };
+const LogoText = styled(Typography)<LogoProps>`
     margin-top: ${ ({isKeyboardVisiable, theme}) => theme.spacing(isKeyboardVisiable ? 0.5 : 1)}px;
-    color: ${ ({theme}) => theme.palette.text.primary };
     text-align: center;
-`
-const Flex1 = styled.View`
-    flex: 1;
 `
 
 const HorizontalFlex1 = styled(Flex1)`
     flex-direction: row;
 `
 
-const Button = styled.TouchableOpacity`
-    background-color: ${ ({theme}) => theme.palette.button.primary };
-    height: 52px;
-    border-radius: 26px;
-    margin: ${ ({theme}) => theme.spacing(2) }px;
-    justify-content: center;
+const LoginButton = styled(Button)`
     bottom: 16px;
 `
-const ButtonTitle = styled.Text`
-    align-self: center;
-    color: ${ ({theme}) => theme.palette.text.primary };
-    font-size: ${ ({theme}) => theme.typography.button.size };
-    font-family: ${ ({theme}) => theme.typography.button.fontFamily };
-    letter-spacing: ${ ({theme}) => theme.typography.button.letterSpacing };
-`
+
 const PassowrdContentContaier = styled.View`
     background-color: ${ ({theme}) => theme.palette.background.secondary };
     padding: ${ ({theme}) => theme.spacing(2) }px;
@@ -78,13 +54,12 @@ const Icon = styled.Image`
     align-self: center;
 `
 
-const PhoneView = styled.View`
+const PhoneView = styled(Flex1)`
     background-color: ${ ({theme}) => theme.palette.content.primary };
     border-radius: 26px;
     height: 52px;
     padding: ${ ({theme}) => theme.spacing(2)}px ${({theme}) => theme.spacing(3)}px;
     flex-direction: row;
-    flex: 1;
 `
 const PhoneTextInput = styled.TextInput`
     letter-scaping: ${ ({theme}) => theme.typography.body15Regular.letterSpacing };
@@ -95,63 +70,70 @@ const PhoneTextInput = styled.TextInput`
     color: ${ ({theme}) => theme.palette.text.primary };
     padding-right: 16px;
 `
-const CloseButton = styled.TouchableOpacity`
-    width: ${ ({theme}) => theme.spacing(3) }px;
-    height: ${ ({theme}) => theme.spacing(3) }px;
-    margin-top: ${ ({theme}) => theme.spacing(1.5) }px;
-    margin-left: ${ ({theme}) => theme.spacing(2) }px;
-    tint-color: ${ ({theme}) => theme.palette.button.secondary };
+
+const ActivityIndicatorContainer = styled(Flex1)`
+    justify-content: center;
+    align-content: center;
 `
-const CloseIcon = styled.Image`
-    width: ${ ({theme}) => theme.spacing(3) }px;
-    height: ${ ({theme}) => theme.spacing(3) }px;
-    tint-color: ${ ({theme}) => theme.palette.button.secondary };
+const EnterPasswordText = styled(Typography)`
+    margin-top: ${ ({theme}) => theme.spacing(10) }px;
+    text-align: center;
 `
 
-const ActivityIndicatorContainer = styled.ActivityIndicator`
-    flex: 1;
-    justify-self: center;
-    align-self: center;
-`
+const invalidPasswordLengthError = 'Длина пароля должна быть не менее 5 символов'
+const invalidErrorPassword = 'Пароль может содержать только цифры и буквы'
 
 export const PasswordScreen = ({navigation}: PasswordScreenProps) => {
     const isKeyboardVisible = KeyboardListener().isKeyboardVisible;
     const [password, setPassword] = useState('')
-    const [errorString, setErrorString] = useState<string | undefined>(undefined)
+    const [errorString, setErrorString] = useState<string | null>(null)
     const [isPassowrdHidden, setIsPassowrdHidden] = useState(true)
-    const { mutateAsync: postPssword, isLoading, isError } = usePostPassword()
+    const { mutateAsync: postPassword, isLoading } = usePostPassword()
     const guestToken = useStore($guestToken)
 
-    const handleLogin = () => {
-        const specialChars = `/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;`
-        const isSpecialCharsPresent = specialChars.split('').some(char => 
-            password.includes(char))
-
+    const validatePasswordLengh = () => {
         if (password.length < 5) {
-            setErrorString('Длина пароля должна быть не менее 5 символов')
-        } else if (isSpecialCharsPresent) {
-            setErrorString('Пароль может содержать только цифры и буквы')
-        } else {
-            postPssword({guestToken: guestToken ?? '', password: password})
-                .then((data) => {
-                    setAuthTokens(data)
-                    navigation.push('successScreen')
+            setErrorString(invalidPasswordLengthError)
+            return false
+        }
+        return true
+    }
+
+    const validatePasswordIncludingSpecialSymbols = () => {
+        const specialChars = `/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;`
+        const isSpecialCharsPresent = specialChars.split('').some(char => password.includes(char))
+
+        if (isSpecialCharsPresent) {
+            setErrorString(invalidErrorPassword)
+            return false
+        }
+        return true
+    }
+
+    const handleLogin = () => {
+        if (!validatePasswordLengh()) {
+            return
+        }
+
+        if (!validatePasswordIncludingSpecialSymbols()) {
+            return
+        }
+
+        if (guestToken) {
+            postPassword({guestToken: guestToken, password: password}, {
+                onSuccess: (data) => {
+                   setAuthTokensData(data)
+                   navigation.push('successScreen')
+                },
+                onError: () => {
+                    navigation.push('errorScreen')
+                }
             })
         }
     }
 
-    useEffect(() => {
-        if (isError) {
-            navigation.push('errorScreen')
-        }
-    }, [isError])
-
     const handleCloseAlert = () => {
-        setErrorString(undefined)
-    }
-
-    const onTextChange = (text: string) => {
-        setPassword(text)
+        setErrorString(null)
     }
 
     const showAlert = () => {
@@ -161,14 +143,11 @@ export const PasswordScreen = ({navigation}: PasswordScreenProps) => {
             [
                 {
                     text: 'Отмена',
-                    onPress: (_) => {},
                     style: 'cancel'
                 },
                 {
                     text: 'Выйти',
-                    onPress: (_) => {
-                        navigation.popToTop()
-                    },
+                    onPress: navigation.popToTop,
                     style: "default"
                 }
             ]
@@ -178,7 +157,9 @@ export const PasswordScreen = ({navigation}: PasswordScreenProps) => {
     if (isLoading) {
         return (
             <MainContainer>
-                <ActivityIndicatorContainer />
+                <ActivityIndicatorContainer>
+                    <ActivityIndicator />
+                </ActivityIndicatorContainer>
             </MainContainer>
         )
     }
@@ -186,41 +167,38 @@ export const PasswordScreen = ({navigation}: PasswordScreenProps) => {
     return (
         <MainContainer behavior = 'padding'>
             <ErrorAlert 
-                isVisiable = { errorString !== undefined } 
+                isVisiable = { Boolean(errorString) }
                 title = { errorString ?? "" }
                 onClose = { handleCloseAlert }
                 timeToDismiss = { 2000 }
             />
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                <SafeAreaContainer>
-                    <CloseButton onPress = { showAlert }>
-                        <CloseIcon source = {Images.close}  />
-                    </CloseButton>
+                <SafeAreaFlex1>
+                    <CloseButton onPress = { showAlert } />
                     <Logo isKeyboardVisiable = {isKeyboardVisible} source={Images.logo} />
-                    <LogoText isKeyboardVisiable = {isKeyboardVisible}>Digital Bank</LogoText>
+                    <LogoText isKeyboardVisiable = {isKeyboardVisible} variant = {isKeyboardVisible ? 'caption4' : 'caption3' }>Digital Bank</LogoText>
+                    <EnterPasswordText variant = 'body15Regular'>Введите пароль</EnterPasswordText>
                     <PassowrdContentContaier>
                     <PhoneView>
                     <Icon source = {Images.lockIc} />
                     <HorizontalFlex1>
                         <PhoneTextInput
-                            clearButtonMode = {'never'}
+                            clearButtonMode = 'never'
                             keyboardAppearance = 'dark'
                             secureTextEntry = { isPassowrdHidden }
-                            onChangeText = { onTextChange }
+                            onChangeText = { setPassword }
                             returnKeyType = 'done'
                             autoFocus
                         />
                     </HorizontalFlex1>
-                    <TouchableWithoutFeedback onPress = { () => { setIsPassowrdHidden(!isPassowrdHidden) } }>
+                    <TouchableWithoutFeedback onPress = { () => { setIsPassowrdHidden(prevIsPassowrdHidden => !prevIsPassowrdHidden) } }>
                         <Icon source = {isPassowrdHidden ? Images.unvisiablePasswordIc : Images.visiablePasswordIc} />
                     </TouchableWithoutFeedback>
-            </PhoneView>
-        </PassowrdContentContaier>
+                    </PhoneView>
+                    </PassowrdContentContaier>
                     <Flex1/>
-                    <Button activeOpacity={ 0.7 } onPress={ handleLogin }>
-                        <ButtonTitle>Войти</ButtonTitle>
-                    </Button>
-                </SafeAreaContainer>
+                    <LoginButton title = 'Войти' onPress = { handleLogin } disabled = { false }></LoginButton>
+                </SafeAreaFlex1>
             </TouchableWithoutFeedback>
         </MainContainer>
     );

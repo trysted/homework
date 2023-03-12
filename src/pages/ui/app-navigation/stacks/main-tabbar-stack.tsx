@@ -1,10 +1,10 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Main, Atms, Profile } from '@pages/screens';
 import { StackParamList } from '@shared/types/types';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
+import { NativeStackNavigationProp, createNativeStackNavigator } from '@react-navigation/native-stack';
+import { getFocusedRouteNameFromRoute, useNavigation } from '@react-navigation/native';
 import { Images } from '../../../../../assets';
-import { ImageSourcePropType, Platform } from 'react-native';
+import { Button, ImageSourcePropType, Platform } from 'react-native';
 import { styled } from '@shared/ui/theme';
 import { PaymentsStackNavigation } from './payments-stack';
 
@@ -22,12 +22,10 @@ type TabBarLabelProps = {
 }
 
 type TabBarIconUIProps = {
-  theme: any,
   isFocused: boolean
 }
 
 type TabBarLabelUIProps = {
-  theme: any,
   isFocused: boolean
 }
 
@@ -45,6 +43,8 @@ const TabBarLabel = styled.Text<TabBarLabelUIProps>`
 `
 
 export const MainAppNavigation = () => {
+    const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>()
+
     const tabBarIcon = ({isFocused, source}: TabBarIconProps)  => {
       return <TabBarIcon source = {source} isFocused = { isFocused } />
     }
@@ -108,6 +108,15 @@ export const MainAppNavigation = () => {
         ),
         tabBarIcon: ({ focused }) => (
             tabBarIcon( {isFocused: focused, source: Images.profileTab})
+        ),
+        headerRight: () => (
+          <Button
+            onPress={() => {
+              navigation.popToTop()
+            }}
+            title = "Выход"
+            color = '#FFF'
+          />
         ),
         }} />
         </Tabs.Navigator>

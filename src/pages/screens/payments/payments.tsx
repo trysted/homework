@@ -1,18 +1,16 @@
 import { ActivityIndicator, FlatList, FlatListProps, RefreshControl } from "react-native"
-import { TitledImageItem, Separator } from "@shared/ui/core"
+import { TitledImageItem, Separator, Flex1, Typography } from "@shared/ui/core"
 import { useEffect } from "react"
 import { StackParamList, PaymentCategory } from "@shared/types/types"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import { useNavigation } from "@react-navigation/native"
 import { useStore } from "effector-react"
 import { ErrorAlert } from "@shared/ui/core"
-import { $paymentsGetStatus, clearCache, clearError, fetchPaymentsFx } from './model'
+import { $paymentsGetStatus, clearError, fetchPaymentsFx } from "@entities/payments/models"
 import { styled } from "@shared/ui/theme"
+import { useTheme } from "styled-components"
 
-type PaymentsProps = {}
-
-const Container = styled.View`
-    flex: 1;
+const Container = styled(Flex1)`
     background-color: ${ ({theme}) => theme.palette.background.secondary };
 `
 const ActivityIndicatorContainer = styled(Container)`
@@ -24,37 +22,33 @@ const Header = styled.View`
     height: 116px;
     justify-content: flex-end;
 `
-const HeaderText = styled.Text`
-    color: ${ ({theme}) => theme.palette.text.primary };
-    letter-scaping: ${ ({theme}) => theme.typography.title.letterSpacing };
-    font-family: ${ ({theme}) => theme.typography.title.fontFamily };
-    font-size: ${ ({theme}) => theme.typography.title.size };
+const HeaderText = styled(Typography)`
     margin: 0px ${ ({theme}) => theme.spacing(2) }px;
 `
 const CategoryFlatList = styled(FlatList as new (props: FlatListProps<PaymentCategory>) => FlatList<PaymentCategory>)`
     flex: 1;
 `
 
-export const Payments = ({}: PaymentsProps) => {
+export const Payments = () => {
     const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>()
-    const { loading, error, data} = useStore($paymentsGetStatus)
+    const { loading, error, data } = useStore($paymentsGetStatus)
+    const theme = useTheme()
 
-    const fetchCategories = () => {
-        fetchPaymentsFx()
+    const fetchCategories = (ignoreCache: boolean) => {
+        fetchPaymentsFx(ignoreCache)
     }
 
     useEffect(() => {
-        fetchCategories()
+        fetchCategories(false)
     }, [])
 
     const onRefresh = () => {
-        clearCache()
-        fetchCategories()
+        fetchCategories(true)
     }
 
     const handleCloseErrorAlert = () => {
         if (!data) {
-            fetchCategories()
+            fetchCategories(false)
         } else {
             clearError()
         }
@@ -67,48 +61,47 @@ export const Payments = ({}: PaymentsProps) => {
                 <HeaderText>Платежи</HeaderText>
             </Header>
             <ActivityIndicatorContainer>
-                <ActivityIndicator />
+                <ActivityIndicator size = 'large'/>
             </ActivityIndicatorContainer>
         </Container>
         )
     }
 
     return (
-    <Container>
-        <ErrorAlert 
-            isVisiable = { error !== null } 
-            title = { error?.message ?? '' }
-            onClose = { handleCloseErrorAlert }
-            timeToDismiss = { 2000 }
-        />
-        <Header>
-            <HeaderText>Платежи</HeaderText>
-        </Header>
-        {!error && data && 
-        <CategoryFlatList 
-        data = { data }
-        renderItem = { ({ item }) => (
-            <TitledImageItem isSmallImage = { true } title = { item.categoryName } source = { item.categoryIcon } onClick = { 
-                () => { 
-                    navigation.navigate(
-                    'paymentServices',
-                    {
-                        title: item.categoryName,
-                        services: item.services
-                     }
-                    )}
-             } />
-        )}
-        keyExtractor={item => item.categoryId }
-        ItemSeparatorComponent = { Separator }
-        refreshControl = {
-            <RefreshControl
-              refreshing = { data && loading }
-              onRefresh = { onRefresh }
-              tintColor = { '#FFFFFF' }
+        <Container>
+            <ErrorAlert 
+                isVisiable = { Boolean(error) } 
+                title = { error?.message ?? '' }
+                onClose = { handleCloseErrorAlert }
+                timeToDismiss = { 2000 }
             />
-        }
-        />}
-    </Container>
+            <Header>
+                <HeaderText variant = 'title'>Платежи</HeaderText>
+            </Header>
+            <CategoryFlatList 
+            data = { data }
+            renderItem = { ({ item }) => (
+                <TitledImageItem isSmallImage = { true } title = { item.categoryName } source = { item.categoryIcon } onClick = { 
+                    () => { 
+                        navigation.navigate(
+                        'paymentServices',
+                        {
+                            title: item.categoryName,
+                            services: item.services
+                        }
+                        )}
+                } />
+            )}
+            keyExtractor={item => item.categoryId }
+            ItemSeparatorComponent = { Separator }
+            refreshControl = {
+                <RefreshControl
+                refreshing = { (data && loading) ?? false }
+                onRefresh = { onRefresh }
+                tintColor = { theme.palette.accent.tertiary }
+                />
+            }
+            />
+        </Container>
     )
 }

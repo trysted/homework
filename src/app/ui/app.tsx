@@ -9,6 +9,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 
 import { Storybook } from '../../../.storybook';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaFlex1 } from '@shared/ui/core';
 
 const StorybookButton = styled.TouchableOpacity`
   height: 32px;
@@ -47,12 +48,12 @@ export const App = () => {
       <StrictMode>
         <AppThemeProvider>
           <SafeAreaProvider>
-            <SafeAreaView style={{ flex: 1 }}>
+            <SafeAreaFlex1>
               <Storybook />
               <StorybookButton onPress={() => setStorybookClosed(true)}>
                 <StorybookButtonText>OPEN APP</StorybookButtonText>
               </StorybookButton>
-            </SafeAreaView>
+              </SafeAreaFlex1>
           </SafeAreaProvider>
         </AppThemeProvider>
       </StrictMode>

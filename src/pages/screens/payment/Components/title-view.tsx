@@ -1,3 +1,4 @@
+import { Typography } from "@shared/ui/core";
 import { styled } from "@shared/ui/theme";
 
 export type TitleViewProps = {
@@ -9,18 +10,15 @@ const Container = styled.View`
     background-color: ${ ({theme}) => theme.palette.background.secondary };
 `
 
-const Title = styled.Text`
+const Title = styled(Typography)`
     margin: 16px;
     color: ${ ({theme}) => theme.palette.text.tertiary };
-    letter-scaping: ${ ({theme}) => theme.typography.body15Semibold.letterSpacing };
-    font-family: ${ ({theme}) => theme.typography.body15Semibold.fontFamily };
-    font-size: ${ ({theme}) => theme.typography.body15Semibold.size };
 `
 
 export const TitleView = ({title}: TitleViewProps) => {
     return (
         <Container>
-            <Title>{title}</Title>
+            <Title variant = 'body15Semibold'>{title}</Title>
         </Container>
     );
 }

@@ -1,16 +1,17 @@
 import { ImageSourcePropType } from "react-native";
 import { styled } from "@shared/ui/theme";
 import { useState } from "react";
+import { Flex1 } from "../flex1";
 import { Loader } from "../loader";
 
 export type MaskedPhoneInputProps = {
-    imageSource: ImageSourcePropType | undefined
+    imageSource?: ImageSourcePropType
     onValueChanged: (value: string) => void
     isFailedValidation: boolean
     isNeedToUpdateColor: boolean
     paddingMultiplier: number
     placeholder: string
-    clearButtonMode: "never" | "while-editing" | "unless-editing" | "always" | undefined
+    clearButtonMode?: "never" | "while-editing" | "unless-editing" | "always"
     isLoading: boolean,
     laoderColor?: string
 };
@@ -47,13 +48,12 @@ const FailableIcon = styled(Icon)`
     tint-color: ${ ({theme, isFailedValidation}) => isFailedValidation ? theme.palette.indicator.error : theme.palette.accent.primary };
 `
 
-const PhoneView = styled.View<PhoneViewProps>`
+const PhoneView = styled(Flex1)<PhoneViewProps>`
     background-color: ${ ({theme}) => theme.palette.content.primary };
     border-radius: 26px;
     height: 52px;
     padding: ${ ({theme}) => theme.spacing(2)}px ${ ({theme, paddingMultiplier}) => theme.spacing(paddingMultiplier) }px;
     flex-direction: row;
-    flex: 1;
 `
 const PhoneTextInput = styled.TextInput<PhoneTextInputProps>`
     letter-scaping: ${ ({theme}) => theme.typography.body15Regular.letterSpacing };
@@ -77,7 +77,7 @@ export const MaskedPhoneInput = ({
     }: MaskedPhoneInputProps) => {
     const [phone, setPhone] = useState('')
     const mask = "+# (###) ### ## ##"
-    const handleText = (text: string) => {
+    const onChangeTextHandler = (text: string) => {
         const phoneText = format(text, mask)
         setPhone(phoneText)
         onValueChanged(phoneText)
@@ -114,14 +114,14 @@ export const MaskedPhoneInput = ({
             placeholderTextColor = { isFailedValidation ? '#FB6176' : '#706D76' }
             keyboardType = 'decimal-pad'
             maxLength= { mask.length }
-            onChangeText = { handleText }
+            onChangeText = { onChangeTextHandler }
             keyboardAppearance = 'dark'
             value = { phone }
             onFocus = { () => {
                 setPhone(phone.length == 0 ? '+7 ' : phone)
             }}
             />
-            { isLoading && <Loader stroke = { laoderColor ?? '' } /> }          
+            { isLoading ? <Loader stroke = { laoderColor ?? '' } /> : null }          
             </PhoneView>
         </ContentContaier>
     );

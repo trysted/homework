@@ -10,4 +10,6 @@ export type TypographyVariants =
   | 'body15Semibold'
   | 'caption1'
   | 'caption2'
+  | 'caption3'
+  | 'caption4'
   | 'button';

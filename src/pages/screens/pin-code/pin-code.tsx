@@ -1,15 +1,15 @@
 import { styled } from "@shared/ui/theme"
 import { Images } from "../../../../assets"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Alert } from "react-native"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { StackParamList } from "@shared/types/types"
 import { useStore } from "effector-react"
-import { $attempts, initialAttemptsCount, resetAttempts, updateAttempts, setGuestToken } from './model'
-import { setAuthData, $authData, $phone } from "../phone-auth/model"
-import { usePostConfirm } from "./api/usePostConfirm"
-import { usePostPhone } from "../phone-auth/api/usePostPhone"
-import { Loader } from "@shared/ui/core"
+import { $attempts, initialAttemptsCount, resetAttempts, decrementAttempts, setGuestToken } from "@entities/auth/models"
+import { setAuthData, $authData, $phone } from "@entities/auth/models"
+import { usePostConfirm, usePostPhone } from "@entities/auth/hooks"
+import { Loader, SafeAreaFlex1, Flex1, Typography } from "@shared/ui/core"
+import { useTheme } from "styled-components"
 
 type PinCodeProps = NativeStackScreenProps<StackParamList, 'pinCode'>
 
@@ -19,28 +19,15 @@ type RepeatButtonTextProps = {
 }
 
 type InputTextProps = {
-    theme: any,
     isFailedValidation: boolean
 }
 
-const MainConteiner = styled.SafeAreaView`
-    flex: 1;
+const MainConteiner = styled(SafeAreaFlex1)`
     background-color: ${ ({theme}) => theme.palette.background.primary };
     padding: ${ ({theme}) => theme.spacing(2) }px;
 `
 
-const Flex1 = styled.View`
-    flex: 1;
-`
-
-const WhteText = styled.Text`
-    color: ${ ({theme}) => theme.palette.text.primary };
-`
-
-const NumberKeyboardButtonText = styled(WhteText)`
-    letter-scaping: ${ ({theme}) => theme.typography.title.letterSpacing };
-    font-family: ${ ({theme}) => theme.typography.title.fontFamily };
-    font-size: ${ ({theme}) => theme.typography.title.size };
+const NumberKeyboardButtonText = styled(Typography)`
     text-align: center;
 `
 const DeleteTextImage = styled.Image`
@@ -48,11 +35,8 @@ const DeleteTextImage = styled.Image`
     height: ${ ({theme}) => theme.spacing(3) }px;
 `
 
-const RepeatButtonText = styled.Text<RepeatButtonTextProps>`
+const RepeatButtonText = styled(Typography)<RepeatButtonTextProps>`
     color: ${ ({theme, isAvailable}) => isAvailable ? theme.palette.text.primary : theme.palette.text.secondary };
-    letter-scaping: ${ ({theme}) => theme.typography.caption1.letterSpacing };
-    font-family: ${ ({theme}) => theme.typography.caption1.fontFamily };
-    font-size: ${ ({theme}) => theme.typography.caption1.size };
     text-align: center;
 `
 
@@ -67,10 +51,7 @@ const ButtonsStack = styled.View`
     flex-direction: row;
 `
 
-const Title = styled(WhteText)`
-    letter-scaping: ${ ({theme}) => theme.typography.body15Regular.letterSpacing };
-    font-family: ${ ({theme}) => theme.typography.body15Regular.fontFamily };
-    font-size: ${ ({theme}) => theme.typography.body15Regular.size };
+const Title = styled(Typography)`
     text-align: center;
     margin: ${ ({theme}) => theme.spacing(17.5) }px ${ ({theme}) => theme.spacing(2) }px ${ ({theme}) => theme.spacing(3) }px;
 `
@@ -91,10 +72,7 @@ const InputContainer = styled.View`
     justify-content: center;
 `
 
-const InputText = styled.Text<InputTextProps>`
-    letter-scaping: ${ ({theme}) => theme.typography.subtitle1.letterSpacing };
-    font-family: ${ ({theme}) => theme.typography.subtitle1.fontFamily };
-    font-size: ${ ({theme}) => theme.typography.subtitle1.size };
+const InputText = styled(Typography)<InputTextProps>`
     text-align: center;
     color: ${ ({theme, isFailedValidation}) => isFailedValidation ? theme.palette.indicator.error : theme.palette.text.primary };
 `
@@ -113,17 +91,13 @@ const DeviderView = styled.View`
     background-color: ${ ({theme}) => theme.palette.content.tertiary };
     margin: 0px 3px;
 `
-const ErrorText = styled.Text`
-    letter-scaping: ${ ({theme}) => theme.typography.caption2.letterSpacing };
-    font-family: ${ ({theme}) => theme.typography.caption2.fontFamily };
-    font-size: ${ ({theme}) => theme.typography.caption2.size };
+const ErrorText = styled(Typography)`
     text-align: center;
     margin-top: ${ ({theme}) => theme.spacing(1) }px;
     color: ${ ({theme}) => theme.palette.indicator.error };
 `
 
-const LoaderContainer = styled.View`
-    flex: 1;
+const LoaderContainer = styled(Flex1)`
     justify-content: center;
     align-self: center;
 `
@@ -134,11 +108,10 @@ export const PinCode = ({ navigation }: PinCodeProps) => {
     const authData = useStore($authData)
     const phone = useStore($phone)
     const [isFailedValidation, setIsFailedValidation] = useState(false)
-    const { mutateAsync: postPhoneConfirm, isLoading, isError } = usePostConfirm()
-    const { mutateAsync: postPhoneMutation, isError: isPostPhoneError } = usePostPhone()
+    const { mutateAsync: postPhoneConfirm, isLoading } = usePostConfirm()
     const errorString = `Неверный код. Осталось ${attempts} попытки`
-    const [timer, setTimer] = useState()
     const [seconds, setSeconds] = useState(180)
+    const theme = useTheme()
 
     useEffect(() => {
         if (seconds > 0) {
@@ -150,22 +123,29 @@ export const PinCode = ({ navigation }: PinCodeProps) => {
         }, [seconds])
 
     useEffect(() => {
-        if (code.length === 4) {
-            if (code !== authData?.otpCode) {
-                setIsFailedValidation(true)
-                updateAttempts()
-            } else {
-                postPhoneConfirm({otpId: authData.otpId, pinCode: authData.otpCode, phone: phone ?? ''}).then((data) => {
+        if (code.length < 4) {
+            setIsFailedValidation(false)
+            return
+        }
+        if (code !== authData?.otpCode) {
+            setIsFailedValidation(true)
+            decrementAttempts()
+            return
+        }
+        if (phone) {
+            postPhoneConfirm({otpId: authData.otpId, pinCode: authData.otpCode, phone: phone}, {
+                onSuccess: (data) => {
                     setGuestToken(data)
                     navigation.push('passwordScreen')
-                })
-            }
-        } else {
-            setIsFailedValidation(false)
+                },
+                onError: () => {
+                    handleError()
+                }
+            })
         }
     }, [code])
 
-    const numberKeyboardButton = (text: string) => {
+    const getNumberKeyboardButton = (text: string) => {
         return (
             <NumberKeyboardButton activeOpacity = { 0.7 } onPress = {() => {
                 if (code.length < 4) {
@@ -178,31 +158,41 @@ export const PinCode = ({ navigation }: PinCodeProps) => {
     }
 
     const handleRepeat = () => {
-        postPhoneMutation(phone ?? '').then((data) => {
-            setAuthData(data)
-        })
+        if (phone) {
+            usePostPhone().mutateAsync(phone, {
+                onSuccess: (data) => {
+                    setAuthData(data)
+                },
+                onError: () => {
+                    handleError()
+                }
+            })
+        }
         setSeconds(180)
     }
 
-    const inputContainer = (text: string) => {
+    const getInputContainer = (text: string) => {
         return (
             <InputContainer>
                 <InputText isFailedValidation = { isFailedValidation }>{text}</InputText>
-                { text === '' && <Flex1 /> }
-                { text === '' && <InputLine /> }
+                { text === '' ? <Flex1 /> : null }
+                { text === '' ? <InputLine /> : null }
             </InputContainer>
         )
     }
 
-    const repeatButtonText = () => {
+    const getRepeatButtonText = () => {
         if (seconds === 0) {
             return 'Выслать код повторно'
-        } else {
-            const minutes = Math.floor(seconds / 60)
-            const secondsInMinute = seconds - minutes * 60
-            const secondsString = (secondsInMinute < 10 ? '0' : '') + secondsInMinute
-            return `Повторить через\n${minutes}:${secondsString}`
         }
+        const minutes = Math.floor(seconds / 60)
+        const secondsInMinute = seconds - minutes * 60
+        const secondsString = (secondsInMinute < 10 ? '0' : '') + secondsInMinute
+        return `Повторить через\n${minutes}:${secondsString}`
+    }
+
+    const handleError = () => {
+        navigation.push('errorScreen')
     }
 
     useEffect(() => {
@@ -212,12 +202,6 @@ export const PinCode = ({ navigation }: PinCodeProps) => {
         }
     }, [attempts])
 
-    useEffect(() => {
-        if (isError || isPostPhoneError) {
-            navigation.push('errorScreen')
-        }
-    }, [isError, isPostPhoneError])
-
     const errorAlert = () => {
         Alert.alert(
             'Вы ввели неверно код 5 раз',
@@ -225,9 +209,7 @@ export const PinCode = ({ navigation }: PinCodeProps) => {
             [
                 {
                     text: 'Выход',
-                    onPress: (_) => {
-                        navigation.popToTop()
-                    },
+                    onPress: navigation.popToTop,
                     style: "default"
                 }
             ]
@@ -238,7 +220,7 @@ export const PinCode = ({ navigation }: PinCodeProps) => {
         return (
             <MainConteiner>
                 <LoaderContainer>
-                    <Loader stroke = {'#FFFFFF'} />
+                    <Loader stroke = { theme.palette.accent.tertiary } />
                 </LoaderContainer>
             </MainConteiner>
         )
@@ -246,41 +228,41 @@ export const PinCode = ({ navigation }: PinCodeProps) => {
 
     return (
         <MainConteiner>
-            <Title>На ваш номер отправлено SMS с кодом подтверждения.</Title>
+            <Title variant = 'body15Regular'>На ваш номер отправлено SMS с кодом подтверждения.</Title>
 
             <PinCodeContainer>
-                { inputContainer(code.charAt(0)) }
-                { inputContainer(code.charAt(1)) }
+                { getInputContainer(code.charAt(0)) }
+                { getInputContainer(code.charAt(1)) }
                 <DeviderView />
-                { inputContainer(code.charAt(2)) }
-                { inputContainer(code.charAt(3)) }
+                { getInputContainer(code.charAt(2)) }
+                { getInputContainer(code.charAt(3)) }
             </PinCodeContainer>
-            { attempts < initialAttemptsCount && <ErrorText>{errorString}</ErrorText> }
+            { attempts < initialAttemptsCount ? <ErrorText variant = 'caption2'>{errorString}</ErrorText> : null }
 
             <Flex1 />
             <ButtonsStack>
-                {numberKeyboardButton('1')}
-                {numberKeyboardButton('2')}
-                {numberKeyboardButton('3')}
+                {getNumberKeyboardButton('1')}
+                {getNumberKeyboardButton('2')}
+                {getNumberKeyboardButton('3')}
             </ButtonsStack>
 
             <ButtonsStack>
-                {numberKeyboardButton('4')}
-                {numberKeyboardButton('5')}
-                {numberKeyboardButton('6')}
+                {getNumberKeyboardButton('4')}
+                {getNumberKeyboardButton('5')}
+                {getNumberKeyboardButton('6')}
             </ButtonsStack>
 
             <ButtonsStack>
-                {numberKeyboardButton('7')}
-                {numberKeyboardButton('8')}
-                {numberKeyboardButton('9')}
+                {getNumberKeyboardButton('7')}
+                {getNumberKeyboardButton('8')}
+                {getNumberKeyboardButton('9')}
             </ButtonsStack>
 
             <ButtonsStack>
                 <NumberKeyboardButton activeOpacity = { 0.7 } disabled = { seconds !== 0 } onPress = { handleRepeat }>
-                    <RepeatButtonText  isAvailable = { seconds === 0 }>{repeatButtonText()}</RepeatButtonText>
+                    <RepeatButtonText variant = 'caption1' isAvailable = { seconds === 0 }>{getRepeatButtonText()}</RepeatButtonText>
                 </NumberKeyboardButton>
-                {numberKeyboardButton('0')}
+                {getNumberKeyboardButton('0')}
                 <NumberKeyboardButton activeOpacity = { 0.7 } onPress = { () => {
                     setCode(code.slice(0, -1))
                 }}>

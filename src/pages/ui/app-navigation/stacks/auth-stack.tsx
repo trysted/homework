@@ -8,7 +8,8 @@ const Stack = createNativeStackNavigator<StackParamList>()
 export const AuthStackNavigation = () => {
     return (
         <Stack.Navigator screenOptions= {{ 
-          headerShown: false
+          headerShown: false,
+          gestureEnabled: false
         }}>
             <Stack.Group>
                 <Stack.Screen name = 'phoneAuth' component = { PhoneAuth }/>

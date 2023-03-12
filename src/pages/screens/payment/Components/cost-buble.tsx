@@ -1,3 +1,4 @@
+import { Typography } from "@shared/ui/core";
 import { styled } from "@shared/ui/theme";
 
 export type CostBubleProps = {
@@ -13,11 +14,8 @@ const Container = styled.TouchableOpacity`
     height: 28px;
 `
 
-const PriceText = styled.Text`
+const PriceText = styled(Typography)`
     color: ${ ({theme}) => theme.palette.text.secondary };
-    letter-scaping: ${ ({theme}) => theme.typography.caption1.letterSpacing };
-    font-family: ${ ({theme}) => theme.typography.caption1.fontFamily };
-    font-size: ${ ({theme}) => theme.typography.caption1.size };
     padding: ${ ({theme}) => theme.spacing(1) }px ${ ({theme}) => theme.spacing(2) }px;
 `
 
@@ -26,7 +24,7 @@ export const CostBuble = ({value, onClick}: CostBubleProps) => {
         <Container onPress = {() => {
             onClick(value + ' ₽')
         }}>
-            <PriceText>{value} ₽</PriceText>
+            <PriceText variant = 'caption1'>{value} ₽</PriceText>
         </Container>
     );
 }

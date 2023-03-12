@@ -1,8 +1,8 @@
 import { FlatList, FlatListProps } from "react-native";
 import { TitleView } from "./title-view"; 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CostBuble } from "./cost-buble";
-import { Separator } from "@shared/ui/core";
+import { Separator, Typography } from "@shared/ui/core";
 import { styled } from "@shared/ui/theme";
 
 export type CostViewProps = {
@@ -11,7 +11,6 @@ export type CostViewProps = {
 };
 
 type SeparatorLineProps = {
-    theme: any,
     isActive: boolean,
     isFailedOnValidation: boolean
 }
@@ -35,27 +34,33 @@ const SeparatorLine = styled(Separator)<SeparatorLineProps>`
 const CostsFlatList = styled(FlatList as new (props: FlatListProps<string>) => FlatList<string>)`
     margin: ${ ({theme}) => theme.spacing(2) }px ${ ({theme}) => theme.spacing(2) }px 0px;
 `
-const CashbackText = styled.Text`
+const CashbackText = styled(Typography)`
     margin: ${ ({theme}) => theme.spacing(2) }px ${ ({theme}) => theme.spacing(2) }px ${ ({theme}) => theme.spacing(2.5) }px;
     color: ${ ({theme}) => theme.palette.text.secondary };
-    letter-scaping: ${ ({theme}) => theme.typography.caption1.letterSpacing };
-    font-family: ${ ({theme}) => theme.typography.caption1.fontFamily };
-    font-size: ${ ({theme}) => theme.typography.caption1.size };
 `
+
+const costs = ['100', '500', '1000', '2500', '5000']
+const cashbackPercent = 10
 
 export const CostView = ({onValueChanged, isFailedOnValidation}: CostViewProps) => {
     const [isActive, setActive] = useState(false)
     const [cost, setCost] = useState('0 ₽')
-    const costs = ['100', '500', '1000', '2500', '5000']
 
-    const costNumberWithRub = (text: string) => {
-        return Number(text.replace(' ₽', ''))
+    const getCostNumberWithRub = () => {
+        return Number(cost.replace(' ₽', ''))
     }
 
     const onChangeText = (text: string) => {
-        setCost(text)
-        onValueChanged(String(costNumberWithRub(text)))
+        let numbers = text.replace(/[^0-9]/g, '')
+        if (numbers.length === 0) {
+            numbers = '0'
+        }
+        setCost(numbers + ' ₽')
     }
+
+    useEffect(() => {
+        onValueChanged(String(getCostNumberWithRub()))
+    }, [cost])
 
     return (
         <MainContainer>
@@ -69,7 +74,7 @@ export const CostView = ({onValueChanged, isFailedOnValidation}: CostViewProps) 
                 keyboardType= 'decimal-pad'
             />
             <SeparatorLine isActive = { isActive } isFailedOnValidation = { isFailedOnValidation } />
-            {costNumberWithRub(cost) == 0 && 
+            { getCostNumberWithRub() == 0 ?
             <CostsFlatList
                 horizontal
                 data = {costs}
@@ -78,9 +83,8 @@ export const CostView = ({onValueChanged, isFailedOnValidation}: CostViewProps) 
                         onChangeText(value)
                     }} />
                 }
-            />}
-            {costNumberWithRub(cost) != 0 &&
-                <CashbackText>Ваш кешбек составит 10% -  {costNumberWithRub(cost) / 10} ₽</CashbackText>
+            /> :
+            <CashbackText variant = 'caption1'>Ваш кешбек составит 10% -  {getCostNumberWithRub() / cashbackPercent} ₽</CashbackText>
             }
         </MainContainer>
     );
