@@ -1,4 +1,4 @@
-import { AuthTokensData } from "@shared/types/types";
+import { AuthTokensData } from "@entities/auth/models/types";
 import axios from "axios";
 import { useMutation } from "react-query";
 

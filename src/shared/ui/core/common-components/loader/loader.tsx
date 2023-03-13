@@ -1,8 +1,8 @@
-import Svg, { Path } from "react-native-svg"
-import { Animated, Easing, ColorValue } from "react-native"
+import Svg, { Color, Path } from "react-native-svg"
+import { Animated, Easing } from "react-native"
 
 type LoaderProps = {
-    stroke: ColorValue
+    stroke: Color
 }
 
 export const Loader = ({stroke}: LoaderProps) => {

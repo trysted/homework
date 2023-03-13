@@ -1,5 +1,5 @@
 import { styled } from "@shared/ui/theme";
-import { KeyboardListener } from "@shared/types/useKeyboardVisible";
+import { KeyboardListener } from "@entities/common/hooks/use-keyboard-visible";
 import { Images } from "../../../../assets";
 import { Button, KeyboardAvoadingViewFlex1, MaskedPhoneInput, Typography } from "@shared/ui/core";
 import { useEffect, useState } from "react";
@@ -7,7 +7,7 @@ import { TouchableWithoutFeedback, Keyboard } from "react-native";
 import { ErrorAlert, Flex1, SafeAreaFlex1 } from "@shared/ui/core";
 import { usePostPhone } from "../../../entities/auth/hooks";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { StackParamList } from "@shared/types/types";
+import { StackParamList } from "@entities/common/models/types";
 import { resetAttempts, setAuthData, resetAuthData, resetPhone, resetAuthTokensData, resetGuestToken, setPhone } from "@entities/auth/models";
 import { useTheme } from "styled-components";
 

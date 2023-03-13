@@ -3,6 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Cache } from "react-native-cache";
 import { PaymentParser } from "@pages/api/payment-parser";
 import axios from "axios";
+import { PaymentCategory } from "./types";
 
 export const $fetchError = createStore<Error | null>(null)
 
@@ -35,14 +36,13 @@ export const fetchPaymentsFx = createEffect(async (ignoreCache: boolean) => {
     return payments
 })
 
-export const $payments = restore(fetchPaymentsFx.doneData, null)
+export const $payments = restore<PaymentCategory[]>(fetchPaymentsFx.doneData, null)
 
 export const $paymentsGetStatus = combine({
     loading: fetchPaymentsFx.pending,
     error: $fetchError,
     data: $payments,
 });
-
 
 $fetchError
   .on(fetchPaymentsFx.fail, (_, { error }) => error)

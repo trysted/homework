@@ -1,7 +1,7 @@
 import { styled } from "@shared/ui/theme"
 import { Images } from "../../../../assets"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
-import { StackParamList } from "@shared/types/types"
+import { StackParamList } from "@entities/auth/models/types"
 import { Button, Flex1, SafeAreaFlex1, Typography, CloseButton } from "@shared/ui/core"
 
 type ErrorScreenProps = NativeStackScreenProps<StackParamList, 'errorScreen'>

@@ -1,11 +1,11 @@
 import { styled } from "@shared/ui/theme";
-import { KeyboardListener } from "@shared/types/useKeyboardVisible";
+import { KeyboardListener } from "@entities/common/hooks/use-keyboard-visible";
 import { Images } from "../../../../assets";
 import { useState } from "react";
 import { TouchableWithoutFeedback, Keyboard, Alert, ActivityIndicator } from "react-native";
 import { ErrorAlert, KeyboardAvoadingViewFlex1, SafeAreaFlex1, Flex1, Typography, Button, CloseButton } from "@shared/ui/core";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { StackParamList } from "@shared/types/types";
+import { StackParamList } from "@entities/common/models/types";
 import { usePostPassword } from "../../../entities/auth/hooks";
 import { $guestToken } from "@entities/auth/models";
 import { useStore } from "effector-react";

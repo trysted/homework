@@ -3,6 +3,8 @@ import { Images } from "../../../../../../assets";
 import { useEffect, useState } from "react";
 import { styled } from "@shared/ui/theme";
 import Modal from "react-native-modal";
+import { Flex1, SafeAreaFlex1 } from "../flex1";
+import { Typography } from "../../typography";
 
 type ErrorAlertProps = {
     isVisiable: boolean,
@@ -11,13 +13,11 @@ type ErrorAlertProps = {
     timeToDismiss?: number
 };
 
-const Container = styled.SafeAreaView`
-    flex: 1;
-`
 const TouchableContainer = styled.TouchableOpacity`
     flex: 1;
 `
-const MainContainer = styled(Container)`
+
+const MainContainer = styled(SafeAreaFlex1)`
     position: absolute;
     right: 0;
     left: 0;
@@ -25,6 +25,7 @@ const MainContainer = styled(Container)`
     bottom: 0;
     zIndex: 1;
 `
+
 const ContentContainer = styled.View`
     flex-direction: row;
     background-color: ${ ({theme}) => theme.palette.indicator.error };
@@ -33,17 +34,12 @@ const ContentContainer = styled.View`
     justify-content: space-between;
 `
 
-const ErrorText = styled.Text`
-    letter-scaping: ${ ({theme}) => theme.typography.body15Regular.letterSpacing };
-    font-family: ${ ({theme}) => theme.typography.body15Regular.fontFamily };
-    font-size: ${ ({theme}) => theme.typography.body15Regular.size };
-    color: ${ ({theme}) => theme.palette.text.primary };
-`
 const CloseIcon = styled.Image`
     width: 16px;
     height: 16px;
     tint-color: ${ ({theme}) => theme.palette.text.primary };
 `
+
 const CloseContainer = styled.TouchableOpacity`
     padding-left: 16px;
     justify-content: center;
@@ -80,9 +76,9 @@ export const ErrorAlert = ({ isVisiable, title, onClose, timeToDismiss }: ErrorA
                 <TouchableContainer onPress = { handleClose } activeOpacity = { 1 }>
                     <TouchableWithoutFeedback>
                         <ContentContainer>
-                            <Container>
-                                <ErrorText>{title}</ErrorText>
-                            </Container>
+                            <Flex1>
+                                <Typography variant = 'body15Regular'>{title}</Typography>
+                            </Flex1>
                             <CloseContainer onPress = { handleClose }>
                                 <CloseIcon source= { Images.close }/>
                             </CloseContainer>

@@ -1,6 +1,5 @@
 import { View } from 'react-native';
 
-import { storiesOf } from '@storybook/react-native';
 import { styled } from '@shared/ui/theme';
 
 import { Typography as TypographyComponent } from './typography';

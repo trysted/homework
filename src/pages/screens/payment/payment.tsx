@@ -1,5 +1,5 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { StackParamList } from "@shared/types/types";
+import { StackParamList } from "@entities/common/models/types";
 import { useEffect, useState } from "react";
 import { CardSelection, CostView } from "./components";
 import { styled } from "@shared/ui/theme";

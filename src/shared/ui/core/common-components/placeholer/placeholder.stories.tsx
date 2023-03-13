@@ -19,4 +19,4 @@ type PlaceholderStyory = ComponentStory<typeof Placeholder>;
 
 export const Default: PlaceholderStyory = args => (
     <Placeholder {...args} />
-  );
+);

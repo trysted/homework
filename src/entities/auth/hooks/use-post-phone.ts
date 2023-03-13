@@ -1,5 +1,5 @@
 import { useMutation } from "react-query";
-import { AuthData } from "@shared/types/types";
+import { AuthData } from "@entities/auth/models/types";
 import axios from "axios";
 
 const baseUrlString = 'https://stoplight.io/mocks/kode-education/kode-bank/27774162'

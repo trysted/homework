@@ -1,5 +1,5 @@
 import { restore, createEvent } from "effector";
-import { ServiceCategory } from "@shared/types/types";
+import { ServiceCategory } from './types';
 
 export const searchServices = createEvent<{ text: string, initialData: ServiceCategory[] }>()
 export const setServices = createEvent<ServiceCategory[]>()

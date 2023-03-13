@@ -1,14 +1,16 @@
-import { ActivityIndicator, FlatList, FlatListProps, RefreshControl } from "react-native"
-import { TitledImageItem, Separator, Flex1, Typography } from "@shared/ui/core"
+import { ActivityIndicator } from "react-native"
+import { Flex1 } from "@shared/ui/core"
 import { useEffect } from "react"
-import { StackParamList, PaymentCategory } from "@shared/types/types"
-import { NativeStackNavigationProp } from "@react-navigation/native-stack"
-import { useNavigation } from "@react-navigation/native"
+import { PaymentCategory } from "@entities/payments/models/types"
 import { useStore } from "effector-react"
 import { ErrorAlert } from "@shared/ui/core"
 import { $paymentsGetStatus, clearError, fetchPaymentsFx } from "@entities/payments/models"
 import { styled } from "@shared/ui/theme"
 import { useTheme } from "styled-components"
+import { PaymentsHeader, PaymentsTemplate } from "./components"
+import { useNavigation } from "@react-navigation/native"
+import { StackParamList } from "@entities/common/models/types"
+import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 
 const Container = styled(Flex1)`
     background-color: ${ ({theme}) => theme.palette.background.secondary };
@@ -16,17 +18,6 @@ const Container = styled(Flex1)`
 const ActivityIndicatorContainer = styled(Container)`
     justify-content: center;
     align-self: center;
-`
-const Header = styled.View`
-    background-color: ${ ({theme}) => theme.palette.background.primary };
-    height: 116px;
-    justify-content: flex-end;
-`
-const HeaderText = styled(Typography)`
-    margin: 0px ${ ({theme}) => theme.spacing(2) }px;
-`
-const CategoryFlatList = styled(FlatList as new (props: FlatListProps<PaymentCategory>) => FlatList<PaymentCategory>)`
-    flex: 1;
 `
 
 export const Payments = () => {
@@ -54,12 +45,20 @@ export const Payments = () => {
         }
     }
 
+    const onPressCategory = (category: PaymentCategory) => {
+        navigation.navigate(
+            'paymentServices',
+            {
+                title: category.categoryName,
+                services: category.services
+            }
+            )
+    }
+
     if (!data && loading) {
         return (
         <Container>
-            <Header>
-                <HeaderText>Платежи</HeaderText>
-            </Header>
+            <PaymentsHeader title = "Платежи" />
             <ActivityIndicatorContainer>
                 <ActivityIndicator size = 'large'/>
             </ActivityIndicatorContainer>
@@ -75,32 +74,15 @@ export const Payments = () => {
                 onClose = { handleCloseErrorAlert }
                 timeToDismiss = { 2000 }
             />
-            <Header>
-                <HeaderText variant = 'title'>Платежи</HeaderText>
-            </Header>
-            <CategoryFlatList 
-            data = { data }
-            renderItem = { ({ item }) => (
-                <TitledImageItem isSmallImage = { true } title = { item.categoryName } source = { item.categoryIcon } onClick = { 
-                    () => { 
-                        navigation.navigate(
-                        'paymentServices',
-                        {
-                            title: item.categoryName,
-                            services: item.services
-                        }
-                        )}
-                } />
-            )}
-            keyExtractor={item => item.categoryId }
-            ItemSeparatorComponent = { Separator }
-            refreshControl = {
-                <RefreshControl
-                refreshing = { (data && loading) ?? false }
-                onRefresh = { onRefresh }
-                tintColor = { theme.palette.accent.tertiary }
-                />
-            }
+            <PaymentsTemplate
+            header = {{ title: "Платежи" }}
+            categories = {{ 
+                data: data,
+                onPress: onPressCategory,
+                onRefresh: onRefresh,
+                refreshing: (data && loading) ?? false,
+                refreshTintColor: theme.palette.accent.tertiary
+            }}
             />
         </Container>
     )

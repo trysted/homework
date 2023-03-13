@@ -1,12 +1,13 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Main, Atms, Profile } from '@pages/screens';
-import { StackParamList } from '@shared/types/types';
+import { StackParamList } from '@entities/common/models/types';
 import { NativeStackNavigationProp, createNativeStackNavigator } from '@react-navigation/native-stack';
 import { getFocusedRouteNameFromRoute, useNavigation } from '@react-navigation/native';
 import { Images } from '../../../../../assets';
 import { Button, ImageSourcePropType, Platform } from 'react-native';
 import { styled } from '@shared/ui/theme';
 import { PaymentsStackNavigation } from './payments-stack';
+import { useTheme } from 'styled-components';
 
 const Stack = createNativeStackNavigator<StackParamList>()
 const Tabs = createBottomTabNavigator()
@@ -44,6 +45,7 @@ const TabBarLabel = styled.Text<TabBarLabelUIProps>`
 
 export const MainAppNavigation = () => {
     const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>()
+    const theme = useTheme()
 
     const tabBarIcon = ({isFocused, source}: TabBarIconProps)  => {
       return <TabBarIcon source = {source} isFocused = { isFocused } />
@@ -55,8 +57,8 @@ export const MainAppNavigation = () => {
 
     return (
         <Tabs.Navigator screenOptions={{ 
-        tabBarStyle: { backgroundColor: '#312C39', borderTopWidth: 0 },
-        headerStyle: { backgroundColor: '#312C39' },
+        tabBarStyle: { backgroundColor: theme.palette.background.primary, borderTopWidth: 0 },
+        headerStyle: { backgroundColor: theme.palette.background.primary },
         headerTintColor: 'white',
         headerShadowVisible: false
         }}>
@@ -80,14 +82,14 @@ export const MainAppNavigation = () => {
             ),
             headerStyle: {
               borderBottomWidth: 0,
-              backgroundColor: '#312C39'
+              backgroundColor: theme.palette.background.primary
             },
             tabBarOptions: {
               keyboardHidesTabBar: Platform.OS !== 'ios',
             },
             tabBarStyle: {
               display: getFocusedRouteNameFromRoute(route) === "paymentsType" || getFocusedRouteNameFromRoute(route) === undefined ? 'flex' : 'none',
-              backgroundColor: '#312C39',
+              backgroundColor: theme.palette.background.primary,
               borderTopWidth: 0
             }
           })}

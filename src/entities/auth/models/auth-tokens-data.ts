@@ -1,5 +1,5 @@
 import { createEvent, restore } from "effector";
-import { AuthTokensData } from "@shared/types/types";
+import { AuthTokensData } from "@entities/auth/models/types";
 
 export const resetAuthTokensData = createEvent()
 export const setAuthTokensData = createEvent<AuthTokensData>()

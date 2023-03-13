@@ -1,9 +1,9 @@
 import { styled } from "@shared/ui/theme"
 import { Images } from "../../../../assets"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import { Alert } from "react-native"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
-import { StackParamList } from "@shared/types/types"
+import { StackParamList } from "@entities/common/models/types"
 import { useStore } from "effector-react"
 import { $attempts, initialAttemptsCount, resetAttempts, decrementAttempts, setGuestToken } from "@entities/auth/models"
 import { setAuthData, $authData, $phone } from "@entities/auth/models"
@@ -145,18 +145,6 @@ export const PinCode = ({ navigation }: PinCodeProps) => {
         }
     }, [code])
 
-    const getNumberKeyboardButton = (text: string) => {
-        return (
-            <NumberKeyboardButton activeOpacity = { 0.7 } onPress = {() => {
-                if (code.length < 4) {
-                    setCode(code + text)
-                }
-            }}>
-                <NumberKeyboardButtonText>{text}</NumberKeyboardButtonText>
-            </NumberKeyboardButton>
-        )
-    }
-
     const handleRepeat = () => {
         if (phone) {
             usePostPhone().mutateAsync(phone, {
@@ -174,10 +162,22 @@ export const PinCode = ({ navigation }: PinCodeProps) => {
     const getInputContainer = (text: string) => {
         return (
             <InputContainer>
-                <InputText isFailedValidation = { isFailedValidation }>{text}</InputText>
+                <InputText variant = 'subtitle1' isFailedValidation = { isFailedValidation }>{text}</InputText>
                 { text === '' ? <Flex1 /> : null }
                 { text === '' ? <InputLine /> : null }
             </InputContainer>
+        )
+    }
+
+    const getNumberKeyboardButton = (text: string) => {
+        return (
+            <NumberKeyboardButton activeOpacity = { 0.7 } onPress = {() => {
+                if (code.length < 4) {
+                    setCode(code + text)
+                }
+            }}>
+                <NumberKeyboardButtonText variant = 'title'>{text}</NumberKeyboardButtonText>
+            </NumberKeyboardButton>
         )
     }
 

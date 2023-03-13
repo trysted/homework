@@ -1,5 +1,5 @@
 import { PaymentServices, Payments, Payment } from '@pages/screens';
-import { StackParamList } from '@shared/types/types';
+import { StackParamList } from '@entities/common/models/types';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useTheme } from 'styled-components';
 
