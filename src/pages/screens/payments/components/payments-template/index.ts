@@ -1,0 +1,1 @@
+export { PaymentsTemplate } from './payments-template'
