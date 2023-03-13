@@ -32,6 +32,8 @@ const getStories = () => {
     require("../src/shared/ui/core/common-components/titled-image-item/titled-image-item.stories.tsx"),
     require("../src/shared/ui/core/common-components/loader/loader.stories.tsx"),
     require("../src/shared/ui/core/common-components/error-alert/error-alert.stories.tsx"),
+    require("../src/shared/ui/core/common-components/button/button.stories.tsx"),
+    require("../src/shared/ui/core/common-components/masked-text-input/masked-text-input.stories.tsx"),
     require("../src/pages/screens/payments/components/categories-list/categories-list.stories.tsx"),
     require("../src/pages/screens/payments/components/header/header.stories.tsx"),
     require("../src/pages/screens/payments/components/payments-template/payments-template.stories.tsx"),

@@ -1,7 +1,7 @@
 import { styled } from "@shared/ui/theme"
 import { Flex1 } from "../flex1";
 import { Typography } from "../../typography";
-import { Button } from "../button";
+import { Button } from "../button/button";
 
 export type PlaceholderProps = {
     message: string,
