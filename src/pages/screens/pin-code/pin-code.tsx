@@ -5,7 +5,7 @@ import { Alert } from "react-native"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { StackParamList } from "@entities/common/models/types"
 import { useStore } from "effector-react"
-import { $attempts, initialAttemptsCount, resetAttempts, decrementAttempts, setGuestToken } from "@entities/auth/models"
+import { $attempts, initialAttemptsCount, resetAttempts, decrimentAttempts, setGuestToken } from "@entities/auth/models"
 import { setAuthData, $authData, $phone } from "@entities/auth/models"
 import { usePostConfirm, usePostPhone } from "@entities/auth/hooks"
 import { Loader, SafeAreaFlex1, Flex1, Typography } from "@shared/ui/core"
@@ -129,7 +129,7 @@ export const PinCode = ({ navigation }: PinCodeProps) => {
         }
         if (code !== authData?.otpCode) {
             setIsFailedValidation(true)
-            decrementAttempts()
+            decrimentAttempts()
             return
         }
         if (phone) {

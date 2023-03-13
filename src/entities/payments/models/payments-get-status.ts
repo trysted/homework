@@ -1,9 +1,9 @@
 import { createEffect, createStore, combine, restore } from "effector";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Cache } from "react-native-cache";
-import { PaymentParser } from "@pages/api/payment-parser";
 import axios from "axios";
 import { PaymentCategory } from "./types";
+import { PaymentParser } from "./payments-parser";
 
 export const $fetchError = createStore<Error | null>(null)
 

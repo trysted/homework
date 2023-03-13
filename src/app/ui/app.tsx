@@ -8,7 +8,7 @@ import { AppNavigation } from '@pages/ui';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
 import { Storybook } from '../../../.storybook';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { SafeAreaFlex1 } from '@shared/ui/core';
 
 const StorybookButton = styled.TouchableOpacity`
