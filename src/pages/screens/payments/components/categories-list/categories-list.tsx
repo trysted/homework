@@ -1,7 +1,7 @@
 import { PaymentCategory } from "@entities/payments/models/types"
 import { Flex1, Separator, TitledImageItem } from "@shared/ui/core"
 import { styled } from "@shared/ui/theme"
-import { ColorValue, FlatList, FlatListProps, RefreshControl, View } from "react-native"
+import { ColorValue, FlatList, FlatListProps, RefreshControl } from "react-native"
 
 const CategoryFlatList = styled(FlatList as new (props: FlatListProps<PaymentCategory>) => FlatList<PaymentCategory>)`
     flex: 1;

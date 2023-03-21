@@ -1,7 +1,7 @@
 import { FlatList, FlatListProps } from "react-native";
 import { TitleView } from "./title-view"; 
 import { useEffect, useState } from "react";
-import { CostBuble } from "./cost-buble";
+import { CostBubble } from "./cost-bubble";
 import { Separator, Typography } from "@shared/ui/core";
 import { styled } from "@shared/ui/theme";
 
@@ -79,7 +79,7 @@ export const CostView = ({onValueChanged, isFailedOnValidation}: CostViewProps) 
                 horizontal
                 data = {costs}
                 renderItem = {(item) =>
-                    <CostBuble value = {item.item} onClick = {(value) => {
+                    <CostBubble value = {item.item} onClick = {(value) => {
                         onChangeText(value)
                     }} />
                 }

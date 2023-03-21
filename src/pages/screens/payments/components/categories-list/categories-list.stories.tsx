@@ -40,9 +40,9 @@ const Meta: ComponentMeta<typeof CategoriesList> = {
 
 export default Meta;
 
-type CategoriesListStyory = ComponentStory<typeof CategoriesList>;
+type CategoriesListStory = ComponentStory<typeof CategoriesList>;
 
-export const Default: CategoriesListStyory = args => (
+export const Default: CategoriesListStory = args => (
     <Wrapper>
         <CategoriesList {...args} />
     </Wrapper>

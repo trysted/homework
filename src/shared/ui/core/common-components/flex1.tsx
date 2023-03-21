@@ -8,6 +8,6 @@ export const SafeAreaFlex1 = styled.SafeAreaView`
     flex: 1;
 `
 
-export const KeyboardAvoadingViewFlex1 = styled.KeyboardAvoidingView`
+export const KeyboardAvoidingViewFlex1 = styled.KeyboardAvoidingView`
     flex: 1;
 `

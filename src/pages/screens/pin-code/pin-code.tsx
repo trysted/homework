@@ -5,7 +5,7 @@ import { Alert } from "react-native"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { StackParamList } from "@entities/common/models/types"
 import { useStore } from "effector-react"
-import { $attempts, initialAttemptsCount, resetAttempts, decrimentAttempts, setGuestToken } from "@entities/auth/models"
+import { $attempts, initialAttemptsCount, resetAttempts, decrementAttempts, setGuestToken } from "@entities/auth/models"
 import { setAuthData, $authData, $phone } from "@entities/auth/models"
 import { usePostConfirm, usePostPhone } from "@entities/auth/hooks"
 import { Loader, SafeAreaFlex1, Flex1, Typography } from "@shared/ui/core"
@@ -22,7 +22,7 @@ type InputTextProps = {
     isFailedValidation: boolean
 }
 
-const MainConteiner = styled(SafeAreaFlex1)`
+const MainContainer = styled(SafeAreaFlex1)`
     background-color: ${ ({theme}) => theme.palette.background.primary };
     padding: ${ ({theme}) => theme.spacing(2) }px;
 `
@@ -129,7 +129,7 @@ export const PinCode = ({ navigation }: PinCodeProps) => {
         }
         if (code !== authData?.otpCode) {
             setIsFailedValidation(true)
-            decrimentAttempts()
+            decrementAttempts()
             return
         }
         if (phone) {
@@ -218,16 +218,16 @@ export const PinCode = ({ navigation }: PinCodeProps) => {
 
     if (isLoading) {
         return (
-            <MainConteiner>
+            <MainContainer>
                 <LoaderContainer>
                     <Loader stroke = { theme.palette.accent.tertiary } />
                 </LoaderContainer>
-            </MainConteiner>
+            </MainContainer>
         )
     }
 
     return (
-        <MainConteiner>
+        <MainContainer>
             <Title variant = 'body15Regular'>На ваш номер отправлено SMS с кодом подтверждения.</Title>
 
             <PinCodeContainer>
@@ -269,6 +269,6 @@ export const PinCode = ({ navigation }: PinCodeProps) => {
                     <DeleteTextImage source = {Images.deleteText} />
                 </NumberKeyboardButton>
             </ButtonsStack>
-        </MainConteiner>
+        </MainContainer>
     )
 }

@@ -1,7 +1,6 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react-native";
 import { ErrorAlert } from "./error-alert";
 import { styled } from "@shared/ui/theme";
-import { useState } from "react";
 
 const Wrapper = styled.View`
   flex: 1;
@@ -12,7 +11,7 @@ const Meta: ComponentMeta<typeof ErrorAlert> = {
     title: 'ui/core/common-components/error-alert',
     component: ErrorAlert,
     args: {
-        isVisiable: false,
+        isVisible: false,
         title: 'Ошибка!',
         timeToDismiss: 2000,
         onClose: () => {}

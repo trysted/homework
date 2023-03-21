@@ -7,7 +7,7 @@ import { Flex1, SafeAreaFlex1 } from "../flex1";
 import { Typography } from "../../typography";
 
 type ErrorAlertProps = {
-    isVisiable: boolean,
+    isVisible: boolean,
     title: string,
     onClose: () => void,
     timeToDismiss?: number
@@ -45,14 +45,14 @@ const CloseContainer = styled.TouchableOpacity`
     justify-content: center;
 `
 
-export const ErrorAlert = ({ isVisiable, title, onClose, timeToDismiss }: ErrorAlertProps) => {
+export const ErrorAlert = ({ isVisible: isVisible, title, onClose, timeToDismiss }: ErrorAlertProps) => {
     const [timer, setTimer] = useState<NodeJS.Timeout | undefined>(undefined)
-    const [visible, setVisiable] = useState(isVisiable)
+    const [visible, setVisible] = useState(isVisible)
 
     const handleClose = () => {
         clearInterval(timer)
         setTimer(undefined)
-        setVisiable(false)
+        setVisible(false)
         onClose()
     }
 
@@ -64,11 +64,11 @@ export const ErrorAlert = ({ isVisiable, title, onClose, timeToDismiss }: ErrorA
     }
 
     useEffect(() => {
-        setVisiable(isVisiable)
-        if (isVisiable) {
+        setVisible(isVisible)
+        if (isVisible) {
             handleStart()
         }
-    }, [isVisiable])
+    }, [isVisible])
 
     return (
         <Modal isVisible = { visible } animationIn = { 'slideInDown' } animationOut = { 'slideOutUp' } hasBackdrop = { false }>

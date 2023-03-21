@@ -20,7 +20,7 @@ const Meta: ComponentMeta<typeof MaskedPhoneInput> = {
         placeholder: 'Телефон',
         isNeedToUpdateColor: true,
         isLoading: false,
-        laoderColor: 'FFF',
+        loaderColor: 'FFF',
     }
 }
 

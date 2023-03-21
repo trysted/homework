@@ -1,5 +1,5 @@
 import { FlatList, FlatListProps } from "react-native"
-import { TitledImageItem, Separator, Placeholder, Flex1, KeyboardAvoadingViewFlex1 } from "@shared/ui/core"
+import { TitledImageItem, Separator, Placeholder, Flex1, KeyboardAvoidingViewFlex1 } from "@shared/ui/core"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { useEffect } from "react"
 import { StackParamList } from "@entities/common/models/types"
@@ -12,7 +12,7 @@ import { useTheme } from "styled-components"
 
 type PaymentServicesProps = NativeStackScreenProps<StackParamList, 'paymentServices'>
 
-const MainContainer = styled(KeyboardAvoadingViewFlex1)`
+const MainContainer = styled(KeyboardAvoidingViewFlex1)`
     background-color: ${ ({theme}) => theme.palette.background.primary };
 `
 const Container = styled(Flex1)`

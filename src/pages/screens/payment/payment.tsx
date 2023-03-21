@@ -45,14 +45,14 @@ export const Payment = ({route, navigation}: PaymentScreenProps) => {
 
         const phoneErrors = validatePhone()
         const costErrors = validateCost()
-        const previousErros = [
+        const previousErrors = [
             ...errors,
             ...phoneErrors,
             ...costErrors
         ]
 
-        if (previousErros.length  > 0) {
-            setErrors(previousErros)
+        if (previousErrors.length  > 0) {
+            setErrors(previousErrors)
         } else {
             Alert.alert(alertTitle, undefined, [{text: 'OK'}])
         }
@@ -112,7 +112,7 @@ export const Payment = ({route, navigation}: PaymentScreenProps) => {
     return (
         <SafeAreaContainer>
             <ErrorAlert 
-                isVisiable = { Boolean(errors.length) } 
+                isVisible = { Boolean(errors.length) } 
                 title = { errors[errors.length - 1] ?? "" }
                 onClose = { handleAlertClosed }
                 timeToDismiss = { 2000 }

@@ -1,7 +1,7 @@
 import { Typography } from "@shared/ui/core";
 import { styled } from "@shared/ui/theme";
 
-export type CostBubleProps = {
+export type CostBubbleProps = {
     value: string,
     onClick: (value: string) => void
 };
@@ -19,7 +19,7 @@ const PriceText = styled(Typography)`
     padding: ${ ({theme}) => theme.spacing(1) }px ${ ({theme}) => theme.spacing(2) }px;
 `
 
-export const CostBuble = ({value, onClick}: CostBubleProps) => {
+export const CostBubble = ({value, onClick}: CostBubbleProps) => {
     return (
         <Container onPress = {() => {
             onClick(value + ' ₽')

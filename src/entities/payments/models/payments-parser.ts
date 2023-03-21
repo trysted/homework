@@ -1,5 +1,3 @@
-const urlString = 'https://github.com/kode-frontend/files/raw/main/categories.json'
-
 type ServiceCategoryDTO = {
     service_id: string,
     service_name: string,

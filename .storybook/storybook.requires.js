@@ -28,7 +28,7 @@ argsEnhancers.forEach((enhancer) => addArgsEnhancer(enhancer));
 
 const getStories = () => {
   return [
-    require("../src/shared/ui/core/common-components/placeholer/placeholder.stories.tsx"),
+    require("../src/shared/ui/core/common-components/placeholder/placeholder.stories"),
     require("../src/shared/ui/core/common-components/titled-image-item/titled-image-item.stories.tsx"),
     require("../src/shared/ui/core/common-components/loader/loader.stories.tsx"),
     require("../src/shared/ui/core/common-components/error-alert/error-alert.stories.tsx"),

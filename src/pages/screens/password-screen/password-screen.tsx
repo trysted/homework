@@ -3,7 +3,7 @@ import { KeyboardListener } from "@entities/common/hooks/use-keyboard-visible";
 import { Images } from "../../../../assets";
 import { useState } from "react";
 import { TouchableWithoutFeedback, Keyboard, Alert, ActivityIndicator } from "react-native";
-import { ErrorAlert, KeyboardAvoadingViewFlex1, SafeAreaFlex1, Flex1, Typography, Button, CloseButton } from "@shared/ui/core";
+import { ErrorAlert, KeyboardAvoidingViewFlex1, SafeAreaFlex1, Flex1, Typography, Button, CloseButton } from "@shared/ui/core";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StackParamList } from "@entities/common/models/types";
 import { usePostPassword } from "../../../entities/auth/hooks";
@@ -14,22 +14,22 @@ import { setAuthTokensData } from "@entities/auth/models";
 type PasswordScreenProps = NativeStackScreenProps<StackParamList, 'passwordScreen'>
 
 type LogoProps = {
-    isKeyboardVisiable: boolean
+    isKeyboardVisible: boolean
 }
 
-const MainContainer = styled(KeyboardAvoadingViewFlex1)`
+const MainContainer = styled(KeyboardAvoidingViewFlex1)`
     background-color: ${({theme}) => theme.palette.background.secondary };
 `
 
 const Logo = styled.Image<LogoProps>`
-    height: ${ ({isKeyboardVisiable}) => isKeyboardVisiable ? 11 : 18 }px;
-    width: ${ ({isKeyboardVisiable}) => isKeyboardVisiable ? 52 : 88 }px;
-    margin-top: ${ ({isKeyboardVisiable, theme}) => theme.spacing(isKeyboardVisiable ? 0 : 2)}px;
+    height: ${ ({isKeyboardVisible}) => isKeyboardVisible ? 11 : 18 }px;
+    width: ${ ({isKeyboardVisible}) => isKeyboardVisible ? 52 : 88 }px;
+    margin-top: ${ ({isKeyboardVisible, theme}) => theme.spacing(isKeyboardVisible ? 0 : 2)}px;
     align-self: center;
 `
 
 const LogoText = styled(Typography)<LogoProps>`
-    margin-top: ${ ({isKeyboardVisiable, theme}) => theme.spacing(isKeyboardVisiable ? 0.5 : 1)}px;
+    margin-top: ${ ({isKeyboardVisible, theme}) => theme.spacing(isKeyboardVisible ? 0.5 : 1)}px;
     text-align: center;
 `
 
@@ -41,7 +41,7 @@ const LoginButton = styled(Button)`
     bottom: 16px;
 `
 
-const PassowrdContentContaier = styled.View`
+const PasswordContentContainer = styled.View`
     background-color: ${ ({theme}) => theme.palette.background.secondary };
     padding: ${ ({theme}) => theme.spacing(2) }px;
     flex-direction: row;
@@ -87,11 +87,11 @@ export const PasswordScreen = ({navigation}: PasswordScreenProps) => {
     const isKeyboardVisible = KeyboardListener().isKeyboardVisible;
     const [password, setPassword] = useState('')
     const [errorString, setErrorString] = useState<string | null>(null)
-    const [isPassowrdHidden, setIsPassowrdHidden] = useState(true)
+    const [isPasswordHidden, setIsPasswordHidden] = useState(true)
     const { mutateAsync: postPassword, isLoading } = usePostPassword()
     const guestToken = useStore($guestToken)
 
-    const validatePasswordLengh = () => {
+    const validatePasswordLength = () => {
         if (password.length < 5) {
             setErrorString(invalidPasswordLengthError)
             return false
@@ -111,7 +111,7 @@ export const PasswordScreen = ({navigation}: PasswordScreenProps) => {
     }
 
     const handleLogin = () => {
-        if (!validatePasswordLengh()) {
+        if (!validatePasswordLength()) {
             return
         }
 
@@ -167,7 +167,7 @@ export const PasswordScreen = ({navigation}: PasswordScreenProps) => {
     return (
         <MainContainer behavior = 'padding'>
             <ErrorAlert 
-                isVisiable = { Boolean(errorString) }
+                isVisible = { Boolean(errorString) }
                 title = { errorString ?? "" }
                 onClose = { handleCloseAlert }
                 timeToDismiss = { 2000 }
@@ -175,27 +175,27 @@ export const PasswordScreen = ({navigation}: PasswordScreenProps) => {
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <SafeAreaFlex1>
                     <CloseButton onPress = { showAlert } />
-                    <Logo isKeyboardVisiable = {isKeyboardVisible} source={Images.logo} />
-                    <LogoText isKeyboardVisiable = {isKeyboardVisible} variant = {isKeyboardVisible ? 'caption4' : 'caption3' }>Digital Bank</LogoText>
+                    <Logo isKeyboardVisible = {isKeyboardVisible} source={Images.logo} />
+                    <LogoText isKeyboardVisible = {isKeyboardVisible} variant = {isKeyboardVisible ? 'caption4' : 'caption3' }>Digital Bank</LogoText>
                     <EnterPasswordText variant = 'body15Regular'>Введите пароль</EnterPasswordText>
-                    <PassowrdContentContaier>
+                    <PasswordContentContainer>
                     <PhoneView>
                     <Icon source = {Images.lockIc} />
                     <HorizontalFlex1>
                         <PhoneTextInput
                             clearButtonMode = 'never'
                             keyboardAppearance = 'dark'
-                            secureTextEntry = { isPassowrdHidden }
+                            secureTextEntry = { isPasswordHidden }
                             onChangeText = { setPassword }
                             returnKeyType = 'done'
                             autoFocus
                         />
                     </HorizontalFlex1>
-                    <TouchableWithoutFeedback onPress = { () => { setIsPassowrdHidden(prevIsPassowrdHidden => !prevIsPassowrdHidden) } }>
-                        <Icon source = {isPassowrdHidden ? Images.unvisiablePasswordIc : Images.visiablePasswordIc} />
+                    <TouchableWithoutFeedback onPress = { () => { setIsPasswordHidden(prevIsPassowrdHidden => !prevIsPassowrdHidden) } }>
+                        <Icon source = {isPasswordHidden ? Images.unvisiablePasswordIc : Images.visiablePasswordIc} />
                     </TouchableWithoutFeedback>
                     </PhoneView>
-                    </PassowrdContentContaier>
+                    </PasswordContentContainer>
                     <Flex1/>
                     <LoginButton title = 'Войти' onPress = { handleLogin } disabled = { false }></LoginButton>
                 </SafeAreaFlex1>

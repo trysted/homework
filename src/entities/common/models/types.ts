@@ -1,6 +1,5 @@
 import { ServiceCategory } from "@entities/payments/models/types"
 
-
 export type StackParamList = {
     phoneAuth: undefined,
     pinCode: undefined,

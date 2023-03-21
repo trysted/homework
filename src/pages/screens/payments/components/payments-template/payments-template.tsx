@@ -1,8 +1,5 @@
-import { PaymentCategory } from "@entities/payments/models/types";
-import { ErrorAlert, Flex1 } from "@shared/ui/core";
+import { Flex1 } from "@shared/ui/core";
 import { styled } from "@shared/ui/theme";
-import { theme } from "@storybook/react-native/dist/preview/components/Shared/theme";
-import { error } from "console";
 import { CategoriesList } from "../categories-list";
 import { PaymentsHeader } from "../header";
 import { ComponentProps } from "react";

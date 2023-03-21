@@ -69,7 +69,7 @@ export const Payments = () => {
     return (
         <Container>
             <ErrorAlert 
-                isVisiable = { Boolean(error) } 
+                isVisible = { Boolean(error) } 
                 title = { error?.message ?? '' }
                 onClose = { handleCloseErrorAlert }
                 timeToDismiss = { 2000 }

@@ -1,7 +1,7 @@
 import { styled } from "@shared/ui/theme";
 import { KeyboardListener } from "@entities/common/hooks/use-keyboard-visible";
 import { Images } from "../../../../assets";
-import { Button, KeyboardAvoadingViewFlex1, MaskedPhoneInput, Typography } from "@shared/ui/core";
+import { Button, KeyboardAvoidingViewFlex1, MaskedPhoneInput, Typography } from "@shared/ui/core";
 import { useEffect, useState } from "react";
 import { TouchableWithoutFeedback, Keyboard } from "react-native";
 import { ErrorAlert, Flex1, SafeAreaFlex1 } from "@shared/ui/core";
@@ -14,22 +14,22 @@ import { useTheme } from "styled-components";
 type PhoneAuthProps = NativeStackScreenProps<StackParamList, 'phoneAuth'>
 
 type LogoProps = {
-    isKeyboardVisiable: boolean
+    isKeyboardVisible: boolean
 }
 
-const MainContainer = styled(KeyboardAvoadingViewFlex1)`
+const MainContainer = styled(KeyboardAvoidingViewFlex1)`
     background-color: ${({theme}) => theme.palette.background.secondary };
 `
 
 const Logo = styled.Image<LogoProps>`
-    height: ${ ({isKeyboardVisiable}) => isKeyboardVisiable ? 11 : 18 }px;
-    width: ${ ({isKeyboardVisiable}) => isKeyboardVisiable ? 52 : 88 }px;
-    margin-top: ${ ({isKeyboardVisiable, theme}) => theme.spacing(isKeyboardVisiable ? 7 : 9)}px;
+    height: ${ ({isKeyboardVisible}) => isKeyboardVisible ? 11 : 18 }px;
+    width: ${ ({isKeyboardVisible}) => isKeyboardVisible ? 52 : 88 }px;
+    margin-top: ${ ({isKeyboardVisible, theme}) => theme.spacing(isKeyboardVisible ? 7 : 9)}px;
     align-self: center;
 `
 
 const LogoText = styled(Typography)<LogoProps>`
-    margin-top: ${ ({isKeyboardVisiable, theme}) => theme.spacing(isKeyboardVisiable ? 0.5 : 1)}px;
+    margin-top: ${ ({isKeyboardVisible, theme}) => theme.spacing(isKeyboardVisible ? 0.5 : 1)}px;
     color: ${ ({theme}) => theme.palette.text.primary };
     text-align: center;
 `
@@ -87,15 +87,15 @@ export const PhoneAuth = ({navigation}: PhoneAuthProps) => {
     return (
         <MainContainer behavior = 'padding'>
             <ErrorAlert 
-                isVisiable = { Boolean(errorString) }
+                isVisible = { Boolean(errorString) }
                 title = { errorString ?? "" }
                 onClose = { handleCloseAlert }
                 timeToDismiss = { 2000 }
             />
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <SafeAreaFlex1>
-                    <Logo isKeyboardVisiable = {isKeyboardVisible} source={Images.logo} />
-                    <LogoText variant = {isKeyboardVisible ? 'caption4' : 'caption3' } isKeyboardVisiable = {isKeyboardVisible}>Digital Bank</LogoText>
+                    <Logo isKeyboardVisible = {isKeyboardVisible} source={Images.logo} />
+                    <LogoText variant = {isKeyboardVisible ? 'caption4' : 'caption3' } isKeyboardVisible = {isKeyboardVisible}>Digital Bank</LogoText>
                     <MaskedPhoneInput
                         imageSource = {Images.phoneAuthIc}
                         onValueChanged = {setPhoneString}
@@ -105,7 +105,7 @@ export const PhoneAuth = ({navigation}: PhoneAuthProps) => {
                         isNeedToUpdateColor = { true }
                         clearButtonMode = 'never'
                         isLoading = { isLoading }
-                        laoderColor = { theme.palette.accent.primary }
+                        loaderColor = { theme.palette.accent.primary }
                     />
                     <Flex1/>
                     <ContinueButton title = { 'Войти' } onPress = { handleLogin } disabled = { isLoading } />

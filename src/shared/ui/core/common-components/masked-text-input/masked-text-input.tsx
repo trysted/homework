@@ -13,7 +13,7 @@ export type MaskedPhoneInputProps = {
     placeholder: string
     clearButtonMode?: "never" | "while-editing" | "unless-editing" | "always"
     isLoading: boolean,
-    laoderColor?: string
+    loaderColor?: string
 };
 
 type PhoneTextInputProps = {
@@ -73,7 +73,7 @@ export const MaskedPhoneInput = ({
     isNeedToUpdateColor,
     clearButtonMode,
     isLoading,
-    laoderColor
+    loaderColor
     }: MaskedPhoneInputProps) => {
     const [phone, setPhone] = useState('')
     const mask = "+# (###) ### ## ##"
@@ -121,7 +121,7 @@ export const MaskedPhoneInput = ({
                 setPhone(phone.length == 0 ? '+7 ' : phone)
             }}
             />
-            { isLoading ? <Loader stroke = { laoderColor ?? '' } /> : null }          
+            { isLoading ? <Loader stroke = { loaderColor ?? '' } /> : null }          
             </PhoneView>
         </ContentContaier>
     );

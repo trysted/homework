@@ -17,9 +17,9 @@ const Meta: ComponentMeta<typeof PaymentsHeader> = {
 
 export default Meta;
 
-type PaymentsHeaderStyory = ComponentStory<typeof PaymentsHeader>;
+type PaymentsHeaderStory = ComponentStory<typeof PaymentsHeader>;
 
-export const Default: PaymentsHeaderStyory = args => (
+export const Default: PaymentsHeaderStory = args => (
     <Wrapper>
         <PaymentsHeader {...args} />
     </Wrapper>

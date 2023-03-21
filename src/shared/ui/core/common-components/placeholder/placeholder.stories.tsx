@@ -15,8 +15,8 @@ const Meta: ComponentMeta<typeof Placeholder> = {
 
 export default Meta;
 
-type PlaceholderStyory = ComponentStory<typeof Placeholder>;
+type PlaceholderStory = ComponentStory<typeof Placeholder>;
 
-export const Default: PlaceholderStyory = args => (
+export const Default: PlaceholderStory = args => (
     <Placeholder {...args} />
 );
