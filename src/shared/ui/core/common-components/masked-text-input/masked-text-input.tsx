@@ -3,6 +3,7 @@ import { styled } from "@shared/ui/theme";
 import { useState } from "react";
 import { Flex1 } from "../flex1";
 import { Loader } from "../loader";
+import { phoneFormat } from "@shared/libs/phone-formatting";
 
 export type MaskedPhoneInputProps = {
     imageSource?: ImageSourcePropType
@@ -31,7 +32,7 @@ type IconProps = {
     isFailedValidation: boolean
 };
 
-const ContentContaier = styled.View`
+const ContentContainer = styled.View`
     background-color: ${ ({theme}) => theme.palette.background.secondary };
     padding: ${ ({theme}) => theme.spacing(2) }px;
     flex-direction: row;
@@ -76,34 +77,15 @@ export const MaskedPhoneInput = ({
     loaderColor
     }: MaskedPhoneInputProps) => {
     const [phone, setPhone] = useState('')
-    const mask = "+# (###) ### ## ##"
+    const phoneMask = "+# (###) ### ## ##"
     const onChangeTextHandler = (text: string) => {
-        const phoneText = format(text, mask)
+        const phoneText = phoneFormat(text, phoneMask)
         setPhone(phoneText)
         onValueChanged(phoneText)
     }
 
-    const format = (value: string, mask: string): string => {
-        const countryCode = '7'
-        let index = 0
-        let replacedIndex = -1
-        const formatedValue = value.replace(/[^\d]/g, '')
-        const filteredString = mask.replace(/#/g, (_, j) => {
-            if (index >= formatedValue.length) {
-                return '#'
-            }
-            replacedIndex = j
-            if (j == 1 && formatedValue[0] != countryCode) {
-                return countryCode
-            }
-            return formatedValue[index++];
-        })
-        const filteredSubstring = filteredString.substring(0, replacedIndex + 1)
-        return filteredSubstring
-    }
-
     return (
-        <ContentContaier>
+        <ContentContainer>
             <PhoneView paddingMultiplier = { paddingMultiplier }>
             { isNeedToUpdateColor ?
             <FailableIcon isFailedValidation = { isFailedValidation } source = {imageSource} /> :
@@ -113,7 +95,7 @@ export const MaskedPhoneInput = ({
             clearButtonMode = {clearButtonMode}
             placeholderTextColor = { isFailedValidation ? '#FB6176' : '#706D76' }
             keyboardType = 'decimal-pad'
-            maxLength= { mask.length }
+            maxLength = { phoneMask.length }
             onChangeText = { onChangeTextHandler }
             keyboardAppearance = 'dark'
             value = { phone }
@@ -123,6 +105,6 @@ export const MaskedPhoneInput = ({
             />
             { isLoading ? <Loader stroke = { loaderColor ?? '' } /> : null }          
             </PhoneView>
-        </ContentContaier>
+        </ContentContainer>
     );
 }
